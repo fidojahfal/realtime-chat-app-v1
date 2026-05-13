@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,32 +12,32 @@ model User {
   username                  String                     @unique
   email                     String                     @unique
   password                  String
-  messages                  Message[]
   conversation_participants Conversation_participant[]
+  messages                  Message[]
 }
 
 model Message {
-  id             Int           @id @default(autoincrement())
-  conversationId Int?
-  userId         Int?
-  message        String
-  user           User?         @relation(fields: [userId], references: [id])
-  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  id              Int           @id @default(autoincrement())
+  conversation_id Int?          @map("conversationId")
+  user_id         Int?          @map("userId")
+  message         String
+  conversation    Conversation? @relation(fields: [conversation_id], references: [id])
+  user            User?         @relation(fields: [user_id], references: [id])
 }
 
 model Conversation {
   id                        Int                        @id @default(autoincrement())
   type                      Conversation_Type          @default(PRIVATE)
-  messages                  Message[]
   conversation_participants Conversation_participant[]
+  messages                  Message[]
 }
 
 model Conversation_participant {
-  id             Int           @id @default(autoincrement())
-  conversationId Int?
-  userId         Int?
-  conversation   Conversation? @relation(fields: [conversationId], references: [id])
-  user           User?         @relation(fields: [userId], references: [id])
+  id              Int           @id @default(autoincrement())
+  conversation_id Int?          @map("conversationId")
+  user_id         Int?          @map("userId")
+  conversation    Conversation? @relation(fields: [conversation_id], references: [id])
+  user            User?         @relation(fields: [user_id], references: [id])
 }
 
 enum Conversation_Type {
