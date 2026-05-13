@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Message } from '../model/chat.model';
+import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
@@ -14,6 +15,8 @@ import { Message } from '../model/chat.model';
   },
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private chatService: ChatService) {}
+
   @WebSocketServer()
   server: Server;
 
@@ -22,7 +25,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private conversations;
 
   @SubscribeMessage('sendPrivateMessage')
-  handleMessage(client: Socket, text: string) {
+  async handleMessage(client: Socket, text: string) {
     const user = this.users.get(client.id);
     const conversation = this.conversations.get(client.id);
 
@@ -30,7 +33,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return { status: 'error', message: 'User not found' };
     }
 
-    const createMessage = {
+    const messageData: Message = {
       id,
       message,
       user_id: user.id,
@@ -38,12 +41,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // created_at: new Date(),
     };
 
-    this.messages.push(createMessage);
+    this.messages.push(messageData);
+    await this.chatService.createMessage(messageData);
     if (this.messages.length > 50) {
       this.messages.shift();
     }
 
-    this.server.emit('receivePrivateMessage', createMessage);
+    this.server.emit('receivePrivateMessage', messageData);
 
     return {
       status: 'success',
