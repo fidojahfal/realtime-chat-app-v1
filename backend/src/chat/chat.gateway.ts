@@ -30,20 +30,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return { status: 'error', message: 'User not found' };
     }
 
-    const message = {
+    const createMessage = {
       id,
-      text,
+      message,
       user_id: user.id,
       conversation_id: conversation.id,
       // created_at: new Date(),
     };
 
-    this.messages.push(message);
+    this.messages.push(createMessage);
     if (this.messages.length > 50) {
       this.messages.shift();
     }
 
-    this.server.emit('receivePrivateMessage', message);
+    this.server.emit('receivePrivateMessage', createMessage);
 
     return {
       status: 'success',

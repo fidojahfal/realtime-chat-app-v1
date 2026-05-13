@@ -2,5 +2,5 @@ export class Message {
   id: number;
   conversation_id: number;
   user_id: number;
-  text: string;
+  message: string;
 }
