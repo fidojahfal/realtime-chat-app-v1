@@ -42,4 +42,41 @@ export class ChatService {
 
     return messages;
   }
+
+  async createMessage(data: Message): Promise<Message> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: data.user_id,
+      },
+    });
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    const conversation = await this.prismaService.conversation.findUnique({
+      where: {
+        id: data.conversation_id,
+      },
+    });
+
+    if (!conversation) {
+      throw Error('Conversation not found');
+    }
+
+    const message = await this.prismaService.message.create({
+      data: {
+        user_id: data.user_id,
+        conversation_id: data.conversation_id,
+        message: data.message,
+      },
+    });
+
+    return {
+      id: message.id,
+      user_id: message.user_id,
+      conversation_id: message.conversation_id,
+      message: message.message,
+    };
+  }
 }
