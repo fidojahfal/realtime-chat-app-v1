@@ -20,9 +20,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  private users;
+  private users = new Map();
   private messages: Message[] = [];
   private conversations;
+
+  @SubscribeMessage('joinPrivateMessage')
+  handleJoinPrivateMessage(client: Socket, username: string) {
+    const user = { id: client.id, username };
+
+    console.log(user);
+    this.users.set(user.id, user.username);
+
+    return { status: 'Success' };
+  }
 
   @SubscribeMessage('sendPrivateMessage')
   async handleMessage(client: Socket, text: string) {
