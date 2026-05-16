@@ -24,4 +24,35 @@ export class UserService {
       email: user.email,
     };
   }
+
+  async register(user: User): Promise<User> {
+    // const inputUser = zod user
+    const checkUser = await this.prismaService.user.findFirst({
+      where: {
+        OR: [
+          {
+            username: user.username,
+          },
+          {
+            email: user.email,
+          },
+        ],
+      },
+    });
+
+    if (checkUser) {
+      throw Error('user already registered');
+    }
+
+    const register = await this.prismaService.user.create({
+      data: checkUser,
+    });
+
+    return {
+      id: register.id,
+      username: register.username,
+      name: register.name,
+      email: register.email,
+    };
+  }
 }
