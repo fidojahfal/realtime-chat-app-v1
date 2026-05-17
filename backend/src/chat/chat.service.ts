@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
-import { Message } from '../model/chat.model';
+import { CreateMessageRequest, MessageResponse } from '../model/chat.model';
 
 @Injectable()
 export class ChatService {
@@ -43,7 +43,7 @@ export class ChatService {
     return messages;
   }
 
-  async createMessage(data: Message): Promise<Message> {
+  async createMessage(data: CreateMessageRequest): Promise<MessageResponse> {
     const user = await this.prismaService.user.findUnique({
       where: {
         id: data.user_id,
@@ -74,8 +74,8 @@ export class ChatService {
 
     return {
       id: message.id,
-      user_id: message.user_id,
-      conversation_id: message.conversation_id,
+      user_id: message.user_id!,
+      conversation_id: message.conversation_id!,
       message: message.message,
     };
   }

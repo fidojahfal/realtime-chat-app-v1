@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Message } from '../model/chat.model';
+import { CreateMessageRequest, Message } from '../model/chat.model';
 import { ChatService } from './chat.service';
 
 @WebSocketGateway({
@@ -43,16 +43,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return { status: 'error', message: 'User not found' };
     }
 
-    const messageData: Message = {
-      id,
-      message,
+    const messageData: CreateMessageRequest = {
+      message: text,
       user_id: user.id,
       conversation_id: conversation.id,
       // created_at: new Date(),
     };
 
-    this.messages.push(messageData);
-    await this.chatService.createMessage(messageData);
+    const message = await this.chatService.createMessage(messageData);
+    this.messages.push(message);
     if (this.messages.length > 50) {
       this.messages.shift();
     }
