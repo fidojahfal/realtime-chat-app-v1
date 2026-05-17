@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CreateMessageRequest, Message } from '../model/chat.model';
+import { CreateMessageRequest, MessageResponse } from '../model/chat.model';
 import { ChatService } from './chat.service';
 
 @WebSocketGateway({
@@ -21,7 +21,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
 
   private users = new Map();
-  private messages: Message[] = [];
+  private messages: MessageResponse[] = [];
   private conversations;
 
   handleConnection(client: any, ...args: any[]) {}
