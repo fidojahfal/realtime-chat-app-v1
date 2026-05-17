@@ -7,7 +7,7 @@ export class UserService {
   constructor(private prismaService: PrismaService) {}
 
   async getUser(id: number): Promise<User> {
-    const user: User = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: {
         id,
       },
@@ -45,7 +45,7 @@ export class UserService {
     }
 
     const register = await this.prismaService.user.create({
-      data: checkUser,
+      data: checkUser!,
     });
 
     return {
