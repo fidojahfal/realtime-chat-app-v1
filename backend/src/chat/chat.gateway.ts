@@ -24,6 +24,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private messages: Message[] = [];
   private conversations;
 
+  handleConnection(client: any, ...args: any[]) {}
+
+  handleDisconnect(client: any) {}
+
   @SubscribeMessage('joinPrivateMessage')
   handleJoinPrivateMessage(client: Socket, username: string) {
     const user = { id: client.id, username };
